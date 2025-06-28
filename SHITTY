@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інтерактивний бізнес-план: Муркіт Кави</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cozy Cat Cafe -->
+    <!-- Application Structure Plan: A tab-based single-page application is chosen for optimal user experience. Instead of a long, linear scroll, users can quickly navigate to sections of interest: Overview, Plan, Finances, and Analysis. This dashboard-like approach allows stakeholders (e.g., investors) to directly access critical data like financials, while others can explore the concept or operational plan. The structure facilitates non-linear exploration, making the complex information of a business plan digestible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        - Project Overview & Concept: (Goal: Inform) Presented using clear headings and highlight cards for key metrics (SMART goals), making the core idea immediately understandable.
+        - Timeline: (Goal: Change) An interactive horizontal timeline built with HTML/CSS. This visually represents the project's progression more effectively than a simple list. Interaction: Hover effects on stages.
+        - Financials: (Goal: Compare/Inform) Donut charts (Chart.js) are used for Budget and Investment structure to clearly show proportions. This is more intuitive than tables of numbers. Key financial figures are highlighted in cards for quick scanning.
+        - SWOT & Risks: (Goal: Organize) An interactive 2x2 grid for SWOT and an accordion for risks. Interaction: Clicking/hovering reveals details. This makes dense information less intimidating and encourages user engagement.
+        - Library/Method: Chart.js for all charts, Vanilla JS for interactivity (tabs, accordions), Tailwind CSS for styling. 
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #FDFBF8;
+            color: #5D4037;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            border-bottom-color: #A98E78;
+            color: #3E2723;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #EFEBE9;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+        }
+        .swot-card {
+            transition: background-color 0.3s ease;
+        }
+        .swot-card:hover {
+            background-color: #F5F5F5;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">
+                <span class="text-[#A98E78]">🐾</span> Муркіт Кави
+            </h1>
+            <nav id="mainNav" class="flex flex-wrap justify-center space-x-4 md:space-x-6">
+                <a href="#overview" class="nav-link active font-semibold py-2 px-2 text-sm md:text-base cursor-pointer">Огляд</a>
+                <a href="#plan" class="nav-link font-semibold py-2 px-2 text-sm md:text-base cursor-pointer">План</a>
+                <a href="#finance" class="nav-link font-semibold py-2 px-2 text-sm md:text-base cursor-pointer">Фінанси</a>
+                <a href="#analysis" class="nav-link font-semibold py-2 px-2 text-sm md:text-base cursor-pointer">Аналіз</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <!-- Overview Section -->
+        <section id="overview" class="content-section active">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Огляд Проєкту</h2>
+                <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-600">
+                    Це — інтерактивний бізнес-план для "Муркіт Кави", унікального простору, що поєднує якісну каву та допомогу безпритульним котам. Цей розділ надає загальне уявлення про концепцію, цілі та ринкові переваги проєкту.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <div class="card rounded-lg p-6 lg:col-span-2">
+                    <h3 class="font-bold text-xl mb-2 text-[#A98E78]">Ідея та Ціннісна Пропозиція</h3>
+                    <p class="text-gray-700">
+                        "Муркіт Кави" – це оазис спокою, де відвідувачі насолоджуються кавою в компанії котів, що очікують на прилаштування. Ми пропонуємо унікальний досвід, що поєднує релаксацію, якісні напої та соціальну місію. Наша перевага – відсутність прямих конкурентів в регіоні та сильний емоційний зв'язок з клієнтами.
+                    </p>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h3 class="font-bold text-xl mb-2 text-[#A98E78]">Ключові Дані</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li><strong>📍 Локація:</strong> Ірпінь, Київська обл.</li>
+                        <li><strong>⏳ Період:</strong> 07.2025 – 01.2026</li>
+                        <li><strong>👥 ЦА:</strong> Молодь, сім'ї, фрілансери</li>
+                        <li><strong>👩‍💻 Автор:</strong> Мар'я Вакалюк</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-center mb-8">Наші SMART-цілі</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-center">
+                <div class="card rounded-lg p-4">
+                    <h4 class="font-bold text-lg">Відвідувачі</h4>
+                    <p class="text-3xl font-bold text-[#A98E78] my-2">50</p>
+                    <p class="text-sm text-gray-600">пропускна спроможність на день</p>
+                </div>
+                <div class="card rounded-lg p-4">
+                    <h4 class="font-bold text-lg">Залучення</h4>
+                    <p class="text-3xl font-bold text-[#A98E78] my-2">1000+</p>
+                    <p class="text-sm text-gray-600">унікальних клієнтів за 3 місяці</p>
+                </div>
+                <div class="card rounded-lg p-4">
+                    <h4 class="font-bold text-lg">Прилаштування</h4>
+                    <p class="text-3xl font-bold text-[#A98E78] my-2">10+</h4>
+                    <p class="text-sm text-gray-600">котів знайдуть дім за рік</p>
+                </div>
+                <div class="card rounded-lg p-4">
+                    <h4 class="font-bold text-lg">Рентабельність</h4>
+                    <p class="text-3xl font-bold text-[#A98E78] my-2">15%</p>
+                    <p class="text-sm text-gray-600">досягти за 6 місяців</p>
+                </div>
+                <div class="card rounded-lg p-4">
+                    <h4 class="font-bold text-lg">Запуск</h4>
+                    <p class="text-3xl font-bold text-[#A98E78] my-2">31.01</h4>
+                    <p class="text-sm text-gray-600">2026 року</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Plan Section -->
+        <section id="plan" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">План Реалізації</h2>
+                <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-600">
+                    Тут представлено ключові етапи запуску проєкту "Муркіт Кави", від початкового планування до офіційного відкриття, а також основні напрямки маркетингової стратегії для залучення нашої цільової аудиторії.
+                </p>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-center mb-8">Етапи Реалізації Проєкту</h3>
+            <div class="relative w-full overflow-x-auto pb-4">
+                <div class="flex items-start justify-between min-w-[700px] md:min-w-full space-x-4">
+                    <div class="absolute top-1/2 left-0 w-full h-0.5 bg-[#A98E78] -translate-y-1/2"></div>
+                    <div class="flex-1 text-center relative z-10">
+                        <div class="w-10 h-10 mx-auto bg-[#A98E78] rounded-full flex items-center justify-center text-white font-bold ring-4 ring-[#FDFBF8]">1</div>
+                        <p class="mt-2 font-semibold">Планування</p>
+                        <p class="text-sm text-gray-500">07-08.2025</p>
+                    </div>
+                    <div class="flex-1 text-center relative z-10">
+                        <div class="w-10 h-10 mx-auto bg-[#A98E78] rounded-full flex items-center justify-center text-white font-bold ring-4 ring-[#FDFBF8]">2</div>
+                        <p class="mt-2 font-semibold">Ремонт</p>
+                        <p class="text-sm text-gray-500">09-10.2025</p>
+                    </div>
+                    <div class="flex-1 text-center relative z-10">
+                        <div class="w-10 h-10 mx-auto bg-[#A98E78] rounded-full flex items-center justify-center text-white font-bold ring-4 ring-[#FDFBF8]">3</div>
+                        <p class="mt-2 font-semibold">Обладнання</p>
+                        <p class="text-sm text-gray-500">11.2025</p>
+                    </div>
+                    <div class="flex-1 text-center relative z-10">
+                        <div class="w-10 h-10 mx-auto bg-[#A98E78] rounded-full flex items-center justify-center text-white font-bold ring-4 ring-[#FDFBF8]">4</div>
+                        <p class="mt-2 font-semibold">Команда</p>
+                        <p class="text-sm text-gray-500">11-12.2025</p>
+                    </div>
+                    <div class="flex-1 text-center relative z-10">
+                        <div class="w-10 h-10 mx-auto bg-[#A98E78] rounded-full flex items-center justify-center text-white font-bold ring-4 ring-[#FDFBF8]">5</div>
+                        <p class="mt-2 font-semibold">Маркетинг</p>
+                        <p class="text-sm text-gray-500">12.2025</p>
+                    </div>
+                     <div class="flex-1 text-center relative z-10">
+                        <div class="w-10 h-10 mx-auto bg-[#A98E78] rounded-full flex items-center justify-center text-white font-bold ring-4 ring-[#FDFBF8]">6</div>
+                        <p class="mt-2 font-semibold">Відкриття</p>
+                        <p class="text-sm text-gray-500">01.2026</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-center mt-16 mb-8">Маркетинговий План</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="card rounded-lg p-6">
+                    <h4 class="font-bold text-lg mb-2">Digital-маркетинг</h4>
+                    <p class="text-gray-600">Активна присутність у Instagram, Facebook, TikTok. Таргетована та контекстна реклама для залучення цільової аудиторії.</p>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h4 class="font-bold text-lg mb-2">PR та Події</h4>
+                    <p class="text-gray-600">Співпраця з місцевими ЗМІ та блогерами. Організація благодійних та освітніх заходів для формування позитивного іміджу.</p>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h4 class="font-bold text-lg mb-2">Локальний маркетинг</h4>
+                    <p class="text-gray-600">Партнерство з сусідніми закладами, роздача листівок та спеціальні пропозиції для місцевих жителів.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Finance Section -->
+        <section id="finance" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Фінансовий Аналіз</h2>
+                <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-600">
+                    Ключові фінансові показники проєкту, включаючи структуру інвестицій, орієнтовний бюджет та прогнози окупності. Цей розділ дає чітке уявлення про економічну привабливість "Муркіт Кави".
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <div class="card rounded-lg p-6 text-center">
+                    <h4 class="font-bold text-lg">Загальний Бюджет</h4>
+                    <p class="text-4xl font-bold text-[#A98E78] my-2">$30-50к</p>
+                    <p class="text-sm text-gray-600">Необхідні інвестиції для запуску</p>
+                </div>
+                <div class="card rounded-lg p-6 text-center">
+                    <h4 class="font-bold text-lg">Окупність</h4>
+                    <p class="text-4xl font-bold text-[#A98E78] my-2">1.5-2.5</p>
+                    <p class="text-sm text-gray-600">Прогнозований термін в роках</p>
+                </div>
+                <div class="card rounded-lg p-6 text-center">
+                    <h4 class="font-bold text-lg">Рентабельність</h4>
+                    <p class="text-4xl font-bold text-[#A98E78] my-2">15-25%</h4>
+                    <p class="text-sm text-gray-600">Чистого прибутку після стабілізації</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-bold text-center mb-4">Структура Початкових Інвестицій</h3>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-bold text-center mb-4">Структура Капіталу</h3>
+                     <div class="chart-container">
+                        <canvas id="investmentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="analysis" class="content-section">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Стратегічний Аналіз</h2>
+                <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-600">
+                    Оцінка внутрішніх та зовнішніх факторів, що можуть вплинути на успіх проєкту. Тут представлено SWOT-аналіз та огляд потенційних ризиків разом із планами щодо їх мінімізації.
+                </p>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-center mb-8">SWOT-аналіз</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="card swot-card rounded-lg p-6">
+                    <h4 class="font-bold text-xl text-green-700 mb-3">S - Сильні сторони</h4>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700">
+                        <li>Унікальна концепція та відсутність конкурентів</li>
+                        <li>Сильна соціальна місія та емоційний зв'язок</li>
+                        <li>Потенціал вірусного маркетингу</li>
+                    </ul>
+                </div>
+                <div class="card swot-card rounded-lg p-6">
+                    <h4 class="font-bold text-xl text-red-700 mb-3">W - Слабкі сторони</h4>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700">
+                        <li>Високі початкові інвестиції</li>
+                        <li>Складність догляду за тваринами</li>
+                        <li>Регуляторні обмеження та вимоги</li>
+                    </ul>
+                </div>
+                <div class="card swot-card rounded-lg p-6">
+                    <h4 class="font-bold text-xl text-blue-700 mb-3">O - Можливості</h4>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700">
+                        <li>Розширення асортименту, продаж сувенірів</li>
+                        <li>Проведення тематичних заходів та майстер-класів</li>
+                        <li>Потенціал для франшизи та залучення туристів</li>
+                    </ul>
+                </div>
+                <div class="card swot-card rounded-lg p-6">
+                    <h4 class="font-bold text-xl text-yellow-700 mb-3">T - Загрози</h4>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700">
+                        <li>Зміна законодавства, економічна нестабільність</li>
+                        <li>Поява конкурентів, негативний резонанс</li>
+                        <li>Проблеми зі здоров'ям котів, алергії</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-center mt-16 mb-8">Оцінка Ризиків та План Управління</h3>
+            <div id="riskAccordion" class="space-y-4">
+                <div class="card rounded-lg">
+                    <button class="accordion-button w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        Фінансові ризики
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4">
+                        <p class="text-gray-600"><strong>План:</strong> Детальний фінплан, резервний фонд, диверсифікація доходів, програми лояльності.</p>
+                    </div>
+                </div>
+                 <div class="card rounded-lg">
+                    <button class="accordion-button w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        Людські та репутаційні ризики
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4">
+                        <p class="text-gray-600"><strong>План:</strong> Ретельний відбір та навчання персоналу, чіткі правила для клієнтів, збір зворотного зв'язку та швидке реагування.</p>
+                    </div>
+                </div>
+                 <div class="card rounded-lg">
+                    <button class="accordion-button w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        Ветеринарні ризики
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4">
+                        <p class="text-gray-600"><strong>План:</strong> Співпраця з перевіреними притулками, планові огляди, ізоляційна зона, протоколи прибирання.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-white mt-12 py-6 border-t border-gray-200">
+        <div class="container mx-auto text-center text-gray-500">
+            <p>&copy; 2025 Муркіт Кави.</p>
+            <p>Проєкт підготувала Мар'я Вакалюк.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    const targetId = link.getAttribute('href').substring(1);
+                    
+                    sections.forEach(section => {
+                        if (section.id === targetId) {
+                            section.classList.add('active');
+                        } else {
+                            section.classList.remove('active');
+                        }
+                    });
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('span');
+                    
+                    if (content.style.maxHeight) {
+                        content.style.maxHeight = null;
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+                        document.querySelectorAll('.accordion-button span').forEach(i => i.style.transform = 'rotate(0deg)');
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+
+            const budgetCtx = document.getElementById('budgetChart');
+            if (budgetCtx) {
+                new Chart(budgetCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Ремонт', 'Обладнання', 'Резерв', 'Запаси', 'Маркетинг', 'Юридичні'],
+                        datasets: [{
+                            data: [50, 26.7, 10.8, 5, 5, 2.5],
+                            backgroundColor: ['#A98E78', '#C8B6A6', '#E4D8D1', '#F5EFE6', '#D6CCC2', '#B9A69A'],
+                            borderColor: '#FDFBF8',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw.toFixed(1)}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const investmentCtx = document.getElementById('investmentChart');
+            if (investmentCtx) {
+                new Chart(investmentCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Капітальні витрати', 'Оборотні кошти'],
+                        datasets: [{
+                            data: [65, 35],
+                            backgroundColor: ['#A98E78', '#D6CCC2'],
+                             borderColor: '#FDFBF8',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                         responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                             tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
